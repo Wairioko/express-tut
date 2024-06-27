@@ -27,39 +27,15 @@ const products = [
     {"meat-type":"mutton", "price": 650, "MOQ": "Kg", "Weight": 1},
 ]
 
-// query parameters
-app.get("/api/users/", (request, response) => {
-    // destructure query string from request, 
-    // gets the filter criteria and value passed
-    const {query: {filter, value}} = request;
-    console.log(request.query);
 
-    if(!filter && !value) return response.sendStatus(404).send("User not found");
-
-    if (filter && value) {
-        const filteredUsers = users.filter(user => user[filter] && user[filter].includes(value));
-        return response.status(200).send(filteredUsers);
-    }
-    
-})
-
-
-app.get("/api/products", (request, response) => {
-    const {query: {filter, value}} = request;
-    if (!filter && !value) 
-        return response.sendStatus(404).send("Meat Product not found");
-
-    if (filter && value) {
-        const filteredProduct = products.filter(product => product[filter] && product[filter].includes(value));
-        return response.status(200).send(filteredProduct);
-    }
-    
-})
 
 app.post("/api/users", (request, response) => {
-    const parseData = request.
+    const { body } = request;
+
+    const newUser = {id: users[users.length -1].id + 1, ...body};
+    users.push(newUser);
     console.log(request.body);
-    return response.send(200);
+    return response.send(newUser);
 
 })
 
@@ -67,3 +43,32 @@ app.post("/api/users", (request, response) => {
 app.listen(PORT, () => {
     console.log(`Running on ${PORT}`)
 })
+
+// // query parameters
+// app.get("/api/users/", (request, response) => {
+//     // destructure query string from request, 
+//     // gets the filter criteria and value passed
+//     const {query: {filter, value}} = request;
+//     console.log(request.query);
+
+//     if(!filter && !value) return response.sendStatus(404).send("User not found");
+
+//     if (filter && value) {
+//         const filteredUsers = users.filter(user => user[filter] && user[filter].includes(value));
+//         return response.status(200).send(filteredUsers);
+//     }
+    
+// })
+
+
+// app.get("/api/products", (request, response) => {
+//     const {query: {filter, value}} = request;
+//     if (!filter && !value) 
+//         return response.sendStatus(404).send("Meat Product not found");
+
+//     if (filter && value) {
+//         const filteredProduct = products.filter(product => product[filter] && product[filter].includes(value));
+//         return response.status(200).send(filteredProduct);
+//     }
+    
+// })
