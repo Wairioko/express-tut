@@ -18,9 +18,15 @@ const meals = [{
     "breakfast": ["tea", "smocha", "fruit"]
 }]
 // define get request from user, senf the meals
-app.get('/breakfast', (req, res) => {
-    res.send(meals)
-});
+app.get('/breakfast' ,
+    (req, res, next) => {
+    console.log("before handling request");
+    next()
+    }, 
+    (req, res) => {
+        res.send(meals)
+    }
+);
 
 
 // post request from user get the meals they have passed
@@ -29,5 +35,3 @@ app.post("/breakfast", (req, res) => {
     meals.push(request.body)
     res.sendStatus(201);
 });
-
-
