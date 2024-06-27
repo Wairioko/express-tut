@@ -1,6 +1,5 @@
 const express = require('express');
 
-
 // init app
 const app = express();
 
@@ -8,6 +7,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded());
 
+const loggingMiddleWare = (req, res, next) => {
+    console.log(`${req.method} - ${req.url}`);
+    next();
+}
+
+app.use(loggingMiddleWare);
 
 
 // Define port
@@ -31,4 +36,29 @@ const products = [
 
 app.get('/api/users', (req, res) => {
     return res.send(users)
+    
 })
+
+
+app.delete("/api/users/:id", (req, res) => {
+    // decon body and parameter id from req object
+    const { body, params: {id}} = req;
+    // convert id to int, currently string
+    const parsedId = parseInt(id);
+    // check if id is valid
+    if (parsedId === isNaN) return res.send(201)
+    // check for id in users list
+    const find_user_index = users.findIndex(
+        (user) => user.id === parsedId
+    )
+    if (find_user_index === -1) return res.send(404);
+    users.pop(users[find_user_index])
+
+    return res.send(users)
+
+})
+
+
+app.listen(PORT, () => {
+    console.log(`Starting server on port ${PORT}`);
+});
