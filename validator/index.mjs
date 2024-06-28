@@ -1,5 +1,6 @@
 import express from 'express';
-import { query, validationResult, param, body } from 'express-validator';
+import { query, validationResult, param, body, checkSchema } from 'express-validator';
+import { createUserValidationSchema } from '../utils/validation-schema.mjs';
 
 // Initialize the express app
 const app = express();
@@ -73,22 +74,14 @@ app.delete("/api/users/:id",
     }
 );
 
-app.post("/api/users/",
-    body("username")
-    .notEmpty()
-    .withMessage("Username Cannot be empty")
-    .isLength({min: 5, max:10})
-    .withMessage("Username has to have between 5 and 10 characters")
-    .isString()
-    .withMessage("Username has to be a string!")
-    .exists()
-    .withMessage("This Username exists, choose another username")
-    ,(req, res) => {
+app.post("/api/users/",checkSchema(createUserValidationSchema) ,
+     (req, res) => {
         const result = validationResult(req);
         console.log(result);
         const { body } = req;
         const newUser = {id: users[users.length - 1].id + 1, ...body};
         users.push(newUser);
+        console.log(newUser);
         return res.status(201).send(newUser)
     }
 
