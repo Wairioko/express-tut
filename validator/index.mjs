@@ -1,6 +1,8 @@
 import express from 'express';
 import { query, validationResult, param, body, checkSchema } from 'express-validator';
 import { createUserValidationSchema } from '../utils/validation-schema.mjs';
+import userRouter from '../routes/users.mjs'
+import productRouter from '../routes/products.mjs';
 
 // Initialize the express app
 const app = express();
@@ -8,6 +10,8 @@ const app = express();
 // Init middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(userRouter);
+app.use(productRouter)
 
 const loggingMiddleWare = (req, res, next) => {
     console.log(`${req.method} - ${req.url}`);
@@ -33,25 +37,6 @@ const products = [
     { "meat-type": "beef", "price": 480, "MOQ": "Kg", "Weight": 1 },
     { "meat-type": "mutton", "price": 650, "MOQ": "Kg", "Weight": 1 },
 ];
-
-app.get('/api/users',
-    query("filter").optional().isString(),
-    query("value").optional().isString(),
-    (req, res) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
-        }
-        const { filter, value } = req.query;
-
-        if (!filter || !value) {
-            return res.status(200).send(users);
-        }
-
-        const filteredUsers = users.filter(user => user[filter] && user[filter].includes(value));
-        return res.status(200).send(filteredUsers);
-    }
-);
 
 app.delete("/api/users/:id",
     param("id").isInt(),
