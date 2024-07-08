@@ -234,65 +234,165 @@ import router from "./routes/users.mjs";
 
 const secretKey = "mysecretKey"
 
+
+// const verifyToken = (req, res, next) => {
+//     const token = req.headers['authorization'];
+//     if(!token) return res.status(401).send("SAccess denied no token presented")
+//         try{
+//             const decoded = jwt.verify(token, 'secretKey');
+//             req.user = decoded;
+//             next();
+//         }catch (error){
+//             res.status(400).send(error)
+//         }
+// }
+// app.post("/login", (req, res) => {
+//     const { email, password } = req.body;
+//     const user = users.find((user) => user.email === email);
+//     if(!user) return res.status(400).send("No user registered via this email");
+//     if(user.password !== password) return res.status(400).send("Wrong Password");
+//     const token = jwt.sign({email: user.email}, 'secretKey', {expiresIn:'1h'})
+//     res.status(200).send({ token });
+// })
+
+
+// app.get('/profile', (req, res) => {
+//     const user =  users.find((user) => user.email === req.user.email)
+//     if(!user) return res.status(404).send("User not found");
+//     res.status(200).send(user);
+// })
+
+// import axios from 'axios'
+
+// router.get('/JSONPlaceholder', async (req, res) => {
+//     try{
+//         const response = await axios.get("lalala.com");
+//         res.status(200).send(response.data);
+//     }catch(error){
+//         res.status(500).send("Error fethcing data from external API");
+//     }
+// })
+
+
+// import multer from "multer";
+
+
+// const file_upload = () => multer.diskStorage({
+//     destination: (req, res, cb) => {
+//         cb(null, 'uploads/');
+//     },
+//     filename: (req, res, cb) => {
+//         cb(null, file.originalname)
+//     }
+// })
+
+
+// const upload = multer({file_upload})
+
+// app.post('/upload', upload.single('file'), (req, res) => {
+//     res.status(200).send("File uploaded successfully");
+// })
+
+
+
+
+// Task 15: Complex Query Handling
+// Create a route that allows filtering users based on their name and email.
+//  Implement this in a way that allows partial matching 
+// (e.g., searching for "John" should return users with names like "John", "Johnny", etc.).
+
+
+
+// router.get('/users', (req, res) => {
+//     const { name, email } = res.query;
+//     const findUser = users.includes((name) => users.username = name);
+//     if(!findUser) return res.status(400).send("User not found");
+//     return res.status(200).send(`Found the user(s) ${name}`)
+// })
+
+
+// import WebSocket from "ws";
+// import { http } from 'http';
+
+// const server = http.createServer(app);
+// const wss = new WebSocket.Server({ server })
+
+// router.get('/', (req, res) => {
+//     res.status(200).send('home page')
+// });
+
+
+
+
+// wss.on('connection', (ws) => {
+//     console.log('Client connected');
+
+
+//     ws.on('message', (message) => {
+//         console.log("Received: ", message);
+//     });
+
+//     ws.on('close', () => {
+//         console.log('client connection ended');
+//     });
+// });
+
+
+// const PORT = process.env.PORT || 3000;
+// server.listen(PORT, () => console.log("Sever started"))
+
+
+
+
+// Task 17: Database Integration (MongoDB)
+// Integrate MongoDB into your application using Mongoose. 
+// Create models for users and products, and update your routes to interact with the database instead of in-memory data.
+
+
+// define models
+
+// import mongoose from "mongoose";
+
+// const userModel = new mongoose.Schema(
+//     {
+//         username : {
+//             type: String,
+//             required: true,
+//             unique: true
+//         },
+//         email : {
+//             type: String,
+//             required: true,
+//             unique: true
+//         },
+//         password: {
+//             type: String,
+//             required: true
+//         }
+//     }
+// );
+
+// mongoose.connect('http://mongodb:localhost/27017/myuserdatabase', { useNewUrlParser: true, useUnifiedTopology: true}, () => {
+//     console.log("Connected to MongoDB");
+// })
+
+
+// const User = mongoose.model('User', userModel)
+
+
+
+// Challenge 1: JWT (JSON Web Tokens)
+// Task: Create an Express middleware to verify a JWT.
+
+// Set up an Express server.
+// Create a JWT token using a secret key.
+// Implement a middleware function to verify the JWT token and protect a route.
+
+
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if(!token) return res.status(401).send("SAccess denied no token presented")
-        try{
-            const decoded = jwt.verify(token, 'secretKey');
-            req.user = decoded;
-            next();
-        }catch (error){
-            res.status(400).send(error)
-        }
+    
+    
 }
-app.post("/login", (req, res) => {
-    const { email, password } = req.body;
-    const user = users.find((user) => user.email === email);
-    if(!user) return res.status(400).send("No user registered via this email");
-    if(user.password !== password) return res.status(400).send("Wrong Password");
-    const token = jwt.sign({email: user.email}, 'secretKey', {expiresIn:'1h'})
-    res.status(200).send({ token });
-})
-
-
-app.get('/profile', (req, res) => {
-    const user =  users.find((user) => user.email === req.user.email)
-    if(!user) return res.status(404).send("User not found");
-    res.status(200).send(user);
-})
-
-import axios from 'axios'
-
-router.get('/JSONPlaceholder', async (req, res) => {
-    try{
-        const response = await axios.get("lalala.com");
-        res.status(200).send(response.data);
-    }catch(error){
-        res.status(500).send("Error fethcing data from external API");
-    }
-})
-
-
-import multer from "multer";
-
-
-const file_upload = () => multer.diskStorage({
-    destination: (req, res, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, res, cb) => {
-        cb(null, file.originalname)
-    }
-})
-
-
-const upload = multer({file_upload})
-
-app.post('/upload', upload.single('file'), (req, res) => {
-    res.status(200).send("File uploaded successfully");
-})
-
-
 
 
 
