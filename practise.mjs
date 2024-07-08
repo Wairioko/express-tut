@@ -222,40 +222,75 @@ const port = process.env.PORT || 3000;
 
 
 const LoggingMiddleware = (req, res, next) => {
-
     console.log(`${req.method} - ${req.url}`)
-    console.log(Date.now());
+    console.log(new Date.toISOString());
     next();
 }
 
 app.use(LoggingMiddleware)
 
 import jwt from "jsonwebtoken"
+import router from "./routes/users.mjs";
 
+const secretKey = "mysecretKey"
 
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    if(!token) return res.status(401).send("SAccess denied no token presented")
+        try{
+            const decoded = jwt.verify(token, 'secretKey');
+            req.user = decoded;
+            next();
+        }catch (error){
+            res.status(400).send(error)
+        }
+}
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-    for (let index = 0; index < users.length; index++) {
-        const user = users[index]
-        if (user.email=== email){
-            if(!user.password === password)return res.status(400).send("Wrong Password")
-            res.status(200).send(`Welcome back ${user.email}`)
-        }else{
-            res.status(404).send("Email not found")
-        }       
-    }
+    const user = users.find((user) => user.email === email);
+    if(!user) return res.status(400).send("No user registered via this email");
+    if(user.password !== password) return res.status(400).send("Wrong Password");
+    const token = jwt.sign({email: user.email}, 'secretKey', {expiresIn:'1h'})
+    res.status(200).send({ token });
 })
 
 
 app.get('/profile', (req, res) => {
-    const { email, password} = req.query;
-    for (let index=0; index < users.length; index++){
-        if(jwt.decode())
-    }
+    const user =  users.find((user) => user.email === req.user.email)
+    if(!user) return res.status(404).send("User not found");
+    res.status(200).send(user);
+})
 
+import axios from 'axios'
+
+router.get('/JSONPlaceholder', async (req, res) => {
+    try{
+        const response = await axios.get("lalala.com");
+        res.status(200).send(response.data);
+    }catch(error){
+        res.status(500).send("Error fethcing data from external API");
+    }
 })
 
 
+import multer from "multer";
+
+
+const file_upload = () => multer.diskStorage({
+    destination: (req, res, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, res, cb) => {
+        cb(null, file.originalname)
+    }
+})
+
+
+const upload = multer({file_upload})
+
+app.post('/upload', upload.single('file'), (req, res) => {
+    res.status(200).send("File uploaded successfully");
+})
 
 
 
