@@ -214,9 +214,12 @@ const products = [
 
 
 import express from "express";
+import http from "node:http";
+
 
 
 const app = express();
+
 
 const port = process.env.PORT || 3000;
 
@@ -233,6 +236,96 @@ import jwt from "jsonwebtoken"
 import router from "./routes/users.mjs";
 
 const secretKey = "mysecretKey"
+
+
+const server = http.createServer((req, res) => {
+    if(req.url === '/'){
+        res.setHeader({'ContextType': 'text/plain'})
+        res.end('Hello, World')
+    }else{
+        res.end("Invalid route")
+    }
+
+})
+
+
+server.listen(port, () => console.log(`Listening on port ${port}`))
+
+
+
+app.get('/api/users/:name', (req, res) => {
+    const { name } = req.query;
+    if(name.isString()){
+        res.status(200).send(`Hello, ${name}`);
+    }else{
+        res.status(500).send("Invalid name being passed, it should be a string");
+    }
+})
+
+app.use((req, res, next) => {
+    console.log(`${req.method} - ${req.url} - ${Date.toString()}`)
+})
+
+import fs from "node:fs"
+app.use(async (req, res) => {
+    if(req.url === '/'){
+        res.contentType({'Contentype': 'application/json'})
+        fs.readFileSync('/public/text.txt', (data, error) => {
+            if(error){
+                res.status(400).send("Error reasding file")
+            }else{
+                res.send(data)
+            }
+        })
+    }
+})
+
+
+
+app.post('/api/users/', (req, res) => {
+    const { data } = req.body;
+    const stringData = JSON.stringify(data);
+    res.status(200).send(stringData);
+})
+
+
+app.use('/', (err, req, res, next) => {
+    next();
+    res.status(500).send("Error");  
+})
+
+
+app.get('/:sortCriteria', (req, res) => {
+    const {sortCriteria} = req.query;
+    if(!sort) return res.status(404).send("Sorting criteria empty")
+    const sortedArray = users.sort((user) => users.sortCriteria === sortCriteria);
+    res.status(400).send(sortedArray)
+})
+
+
+// import multer from "multer";
+
+
+// const uploadFile = () => multer.diskStorage({
+//     destination: (req, res, cb) =>{
+//         cb(null, 'uploads/')
+//     },
+//     filename: (req, res, cb) => {
+//         cb(null, file.originalname)
+//     }
+// }
+// )
+
+// const upload =multer({uploadFile});
+
+// app.post('/upload', upload.single('file'), (req, res) => {
+//     res.status(200).send("File uploaded successfully");
+// })
+
+
+// const port = process.env.PORT || 3000;
+// const dbUrl = process.env.Database || "http://localhost/27017/express-tut"
+
 
 
 // const verifyToken = (req, res, next) => {
@@ -271,26 +364,6 @@ const secretKey = "mysecretKey"
 //     }catch(error){
 //         res.status(500).send("Error fethcing data from external API");
 //     }
-// })
-
-
-// import multer from "multer";
-
-
-// const file_upload = () => multer.diskStorage({
-//     destination: (req, res, cb) => {
-//         cb(null, 'uploads/');
-//     },
-//     filename: (req, res, cb) => {
-//         cb(null, file.originalname)
-//     }
-// })
-
-
-// const upload = multer({file_upload})
-
-// app.post('/upload', upload.single('file'), (req, res) => {
-//     res.status(200).send("File uploaded successfully");
 // })
 
 
@@ -389,10 +462,6 @@ const secretKey = "mysecretKey"
 // Implement a middleware function to verify the JWT token and protect a route.
 
 
-const verifyToken = (req, res, next) => {
-    
-    
-}
 
 
 
