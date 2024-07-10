@@ -221,86 +221,86 @@ import http from "node:http";
 const app = express();
 
 
-const port = process.env.PORT || 3000;
+// const port = process.env.PORT || 3000;
 
 
-const LoggingMiddleware = (req, res, next) => {
-    console.log(`${req.method} - ${req.url}`)
-    console.log(new Date.toISOString());
-    next();
-}
+// const LoggingMiddleware = (req, res, next) => {
+//     console.log(`${req.method} - ${req.url}`)
+//     console.log(new Date.toISOString());
+//     next();
+// }
 
-app.use(LoggingMiddleware)
+// app.use(LoggingMiddleware)
 
-import jwt from "jsonwebtoken"
-import router from "./routes/users.mjs";
+// import jwt from "jsonwebtoken"
+// import router from "./routes/users.mjs";
 
-const secretKey = "mysecretKey"
-
-
-const server = http.createServer((req, res) => {
-    if(req.url === '/'){
-        res.setHeader({'ContextType': 'text/plain'})
-        res.end('Hello, World')
-    }else{
-        res.end("Invalid route")
-    }
-
-})
+// const secretKey = "mysecretKey"
 
 
-server.listen(port, () => console.log(`Listening on port ${port}`))
+// const server = http.createServer((req, res) => {
+//     if(req.url === '/'){
+//         res.setHeader({'ContextType': 'text/plain'})
+//         res.end('Hello, World')
+//     }else{
+//         res.end("Invalid route")
+//     }
+
+// })
 
 
-
-app.get('/api/users/:name', (req, res) => {
-    const { name } = req.query;
-    if(name.isString()){
-        res.status(200).send(`Hello, ${name}`);
-    }else{
-        res.status(500).send("Invalid name being passed, it should be a string");
-    }
-})
-
-app.use((req, res, next) => {
-    console.log(`${req.method} - ${req.url} - ${Date.toString()}`)
-})
-
-import fs from "node:fs"
-app.use(async (req, res) => {
-    if(req.url === '/'){
-        res.contentType({'Contentype': 'application/json'})
-        fs.readFileSync('/public/text.txt', (data, error) => {
-            if(error){
-                res.status(400).send("Error reasding file")
-            }else{
-                res.send(data)
-            }
-        })
-    }
-})
+// server.listen(port, () => console.log(`Listening on port ${port}`))
 
 
 
-app.post('/api/users/', (req, res) => {
-    const { data } = req.body;
-    const stringData = JSON.stringify(data);
-    res.status(200).send(stringData);
-})
+// app.get('/api/users/:name', (req, res) => {
+//     const { name } = req.query;
+//     if(name.isString()){
+//         res.status(200).send(`Hello, ${name}`);
+//     }else{
+//         res.status(500).send("Invalid name being passed, it should be a string");
+//     }
+// })
+
+// app.use((req, res, next) => {
+//     console.log(`${req.method} - ${req.url} - ${Date.toString()}`)
+// })
+
+// import fs from "node:fs"
+// app.use(async (req, res) => {
+//     if(req.url === '/'){
+//         res.contentType({'Contentype': 'application/json'})
+//         fs.readFileSync('/public/text.txt', (data, error) => {
+//             if(error){
+//                 res.status(400).send("Error reasding file")
+//             }else{
+//                 res.send(data)
+//             }
+//         })
+//     }
+// })
 
 
-app.use('/', (err, req, res, next) => {
-    next();
-    res.status(500).send("Error");  
-})
+
+// app.post('/api/users/', (req, res) => {
+//     const { data } = req.body;
+//     const stringData = JSON.stringify(data);
+//     res.status(200).send(stringData);
+// })
 
 
-app.get('/:sortCriteria', (req, res) => {
-    const {sortCriteria} = req.query;
-    if(!sort) return res.status(404).send("Sorting criteria empty")
-    const sortedArray = users.sort((user) => users.sortCriteria === sortCriteria);
-    res.status(400).send(sortedArray)
-})
+// app.use('/', (err, req, res, next) => {
+//     next();
+//     res.status(500).send("Error");  
+// })
+
+
+// app.get('/:sortCriteria', (req, res) => {
+//     const {sortCriteria} = req.query;
+//     if(!sort) return res.status(404).send("Sorting criteria empty")
+//     const sortedArray = users.sort((user) => users.sortCriteria === sortCriteria);
+//     res.status(400).send(sortedArray)
+// })
 
 
 // import multer from "multer";
@@ -460,6 +460,170 @@ app.get('/:sortCriteria', (req, res) => {
 // Set up an Express server.
 // Create a JWT token using a secret key.
 // Implement a middleware function to verify the JWT token and protect a route.
+
+
+
+
+
+// cors middleware
+import cors from "cors"
+
+
+const corsOptions = {
+    origin: "some url",
+    optionsSuccessStatus: 200,
+}
+
+app.use(cors(corsOptions));
+
+app.get('/', (req, res) => {
+    res.status(200).send("Success")
+});
+
+
+import Joi, { required } from "joi";
+const schema = Joi.object({
+    username: Joi.string().alphanum().min(3).max(30).required(),
+    password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).required()
+
+});
+
+
+
+
+app.post('/authenticated', (req, res) => {
+    const { error } = schema.validate(req.body);
+    if(error) {
+        return res.status(400).send(error.details[0].message)
+    }
+    res.status(200).send("Hello, Valid Data for User registration")
+})
+
+import axios from "axios";
+
+app.get('/api/data', async (req, res) => {
+    try {
+        const fetchdata = await axios.get('http to fetch data');
+        const data = fetchdata.data
+        res.status(200).send(data)
+        
+    } catch (error) {
+        console.log(error);
+        res.status(400).send("Error fetching data");
+    }
+})
+
+
+import { Router } from "express";
+import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
+import { type } from "node:os";
+
+const router = Router();
+
+
+router.get('/', (req, res) => {
+    res.cookie("hello", "world", {
+        "maxAge": 300000,
+        signed: true,
+    })
+    res.status(200).send("Hello")
+
+})
+
+
+router.get('/api/message', (req, res) => {
+    if(req.signedCookies && req.signedCookies === "world"){
+        console.log(req.headers.cookie);
+        console.log(req.signedCookies);
+        return res.send([{
+            id: 123,
+            name: "chicken", 
+            price: 500
+        }]);
+    }
+})
+
+
+
+router.post('/api/auth', (req, res) => {
+    const {username, password} = req.body;
+    const findUser = users.find((user) => user.username === username);
+    if(!findUser) return res.status(400).send("User not found please create a user")
+    if(findUser.password !== password){
+        res.status(400).send("Invalid passowrd");
+    }else{
+        res.status(200).send("User authenticated")
+    }
+})
+
+
+
+const userSchema = new mongoose.Schema({
+    username:{
+        type: String,
+        unique: true,
+        required: true
+    },
+    password:{
+        type: String,
+        required: true,
+    },
+    email:{
+        type:true,
+        unique: true,
+        required: true
+    }
+
+})
+
+export const User = mongoose.model("User", userSchema);
+
+
+
+
+mongoose.connect("http://localhost/27017/express-tut")
+.then(() => console.log("Connected to DB"))
+.catch((error) => console.log(error))
+
+
+import bcrypt from "bcrypt"
+
+app.post('/api/user/create', (req, res) => {
+    const { username, email, password } = req.body;
+    const hashed_password = bcrypt.hash(password, 10);
+    const new_user = {"username": username, "email": email, "password":hashed_password}
+    User.bulkSave(new_user);
+    
+})
+
+
+app.delete('/api/user/delete/:email', (req, res) => {
+    const {email} = req.query;
+    if(!email){
+        res.status(404).send("No user with that email found");
+    }else{
+        User.deleteOne({email});
+        res.status(200).send(`User deleted successfully ${email}`);
+    }
+});
+
+
+
+app.put('/api/user/update/:email', (req, res) => {
+    const {email, new_username} = req.body;
+    if(!email){
+        res.status(404).send("No user with that email found");
+    }else{
+
+        User.updateOne({"username": new_username})
+        res.status(200).send(`User username updated successfully for ${email}`);
+    }
+})
+
+
+
+
 
 
 
