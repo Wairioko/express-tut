@@ -4,7 +4,6 @@ import { Task, User } from "./taskSchema.mjs";
 import jwt from 'jsonwebtoken';
 import bcrypt from "bcrypt"
 
-// {"title": "nodeeee","description": "becoooome a backend dev", "dueDate":"30/09/2024"}
 
 // init express app
 const app = express();
@@ -26,20 +25,28 @@ app.use((req, res, next) => {
     next();
 })
 
-
 const verifyToken = (req, res, next) => {
-    const token = req.headers['authorization'];
-    if(!token){
-        res.status(400).send("Access denied No authorization token found");
+    const token = req.header('auth-token');
+    console.log('Token:', token); // Debug log
+
+    if (!token) {
+        console.log('No token provided');
+        return res.status(401).send('Access Denied');
     }
+
     try {
-        const decoded = jwt.decode(token, jwtSecret);
-        req.user = decoded;
-        next;
+        const verified = jwt.verify(token, jwtSecret);
+        console.log('Token verified:', verified); // Debug log
+        req.user = verified; // Attach the verified user to the request
+        next();
     } catch (error) {
-        res.status(400).send(error)
+        console.log('Invalid token:', error.message); // Debug log
+        res.status(400).send('Invalid Token');
     }
-}
+};
+
+
+
 app.post('/api/user/create', async (req, res) => {
     const { username, email, password } = req.body;
     
@@ -80,7 +87,7 @@ app.post('/api/user/login', async (req, res) => {
         const isPasswordValid = bcrypt.compareSync(password, user.password);
         
         if (isPasswordValid) {
-            const token = jwt.sign({ email: user.email }, jwtSecret, { expiresIn: '1h' });
+            const token = jwt.sign({ _id: user._id }, jwtSecret, { expiresIn: '1h' });
             return res.status(200).send({ token });
         } else {
             return res.status(400).send("Wrong Password");
@@ -94,15 +101,21 @@ app.post('/api/user/login', async (req, res) => {
 
 app.post('/api/task/create', verifyToken, async (req, res) => {
     const { title, description, dueDate, status } = req.body;
-    if (!title) return res.status(400).send("Title required");
-    const newTask = new Task({ title, description, dueDate, status });
+    const newTask = new Task({
+        title,
+        description,
+        dueDate,
+        status,
+        user: req.user._id
+    });
     try {
-        await newTask.save();
-        res.status(201).send(`New Task Created: ${JSON.stringify(newTask)}`);
+        const savedTask = await newTask.save();
+        res.status(201).json({ message: "New Task Created", task: savedTask });
     } catch (error) {
-        res.status(500).send(`Error saving new task: ${error.message}`);
+        res.status(400).json({ error: "Error creating task", details: error.message });
     }
 });
+
 
 
 // GET /tasks: Get all tasks
