@@ -1,0 +1,40 @@
+Task: Build a Simple Task Management API
+Requirements:
+Setup:
+
+Create a new Node.js project.
+Set up Express.
+Connect to a MongoDB database.
+Models:
+
+Create a Mongoose model for Task with the following fields:
+title: String (required)
+description: String
+status: String (enum: ['pending', 'in-progress', 'completed'], default: 'pending')
+dueDate: Date
+
+API Endpoints:
+POST /tasks: Create a new task.
+GET /tasks: Get all tasks.
+GET /tasks/:id: Get a single task by ID.
+PUT /tasks/:id: Update a task by ID.
+DELETE /tasks/:id: Delete a task by ID.
+
+
+Validation:
+Ensure that the title field is required when creating or updating a task.
+Validate the status field to accept only the defined enum values.
+Error Handling:
+
+Return appropriate error messages and status codes for invalid inputs or operations (e.g., 404 for not found, 400 for bad request).
+Testing:
+
+Write unit tests for your API endpoints using a testing framework like Mocha or Jest.
+Extra Credit:
+Add pagination to the GET /tasks endpoint.
+Implement searching tasks by title.
+Add user authentication using JWT and restrict task operations to authenticated users only.
+Deliverables:
+Code for the API with all required functionality.
+Instructions on how to run the project and the tests.
+Sample API requests to demonstrate the functionality.
