@@ -1,0 +1,66 @@
+Project: E-commerce API with Node.js, Express, and MongoDB
+Objective:
+Create a comprehensive backend API for an e-commerce application. This API will handle user authentication, product management, order processing, and include advanced features like payment integration and admin functionalities.
+
+Requirements:
+1. Setup:
+Create a new Node.js project.
+Set up Express.
+Connect to a MongoDB database.
+2. Models:
+User: For customer and admin users.
+username: String (required, unique)
+email: String (required, unique)
+password: String (required)
+isAdmin: Boolean (default: false)
+Product: For items being sold.
+name: String (required)
+description: String
+price: Number (required)
+category: String (required)
+stock: Number (default: 0)
+Order: For managing purchases.
+user: ObjectId (reference to User)
+products: Array of objects (each object contains productId and quantity)
+totalPrice: Number (calculated)
+status: String (enum: ['pending', 'paid', 'shipped', 'delivered'], default: 'pending')
+createdAt: Date (default: Date.now)
+3. API Endpoints:
+User Endpoints:
+POST /api/users/register: Register a new user.
+POST /api/users/login: Authenticate a user and issue a JWT.
+Product Endpoints:
+POST /api/products: Create a new product (admin only).
+GET /api/products: Get all products.
+GET /api/products/:id: Get a single product by ID.
+PUT /api/products/:id: Update a product by ID (admin only).
+DELETE /api/products/:id: Delete a product by ID (admin only).
+Order Endpoints:
+POST /api/orders: Create a new order (authenticated users only).
+GET /api/orders: Get all orders (admin only).
+GET /api/orders/:id: Get a single order by ID (authenticated users only, only their orders or admin).
+PUT /api/orders/:id: Update an order status (admin only).
+4. Validation:
+Ensure that all required fields are validated.
+Validate email format and uniqueness for users.
+Validate that the product quantity in an order does not exceed available stock.
+5. Security:
+Hash passwords before storing them in the database.
+Use JWT for user authentication.
+Protect routes using middleware to check for authentication and authorization.
+6. Advanced Features:
+Implement pagination for product listing.
+Add a search feature to filter products by name or category.
+Integrate a payment gateway (like Stripe) to process payments.
+Implement rate limiting to prevent abuse.
+7. Testing:
+Write comprehensive unit tests for your API endpoints using Mocha or Jest.
+Ensure to cover both successful operations and edge cases.
+Extra Credit:
+Implement a role-based access control system where users can have different roles (e.g., admin, customer, guest).
+Add product reviews and ratings.
+Send email notifications on order status changes using a service like SendGrid.
+Deliverables:
+Code for the API with all required functionality.
+Instructions on how to run the project and the tests.
+Sample API requests to demonstrate the functionality.
