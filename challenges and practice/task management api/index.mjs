@@ -28,12 +28,10 @@ app.use((req, res, next) => {
 const verifyToken = (req, res, next) => {
     const token = req.header('auth-token');
     console.log('Token:', token); // Debug log
-
     if (!token) {
         console.log('No token provided');
         return res.status(401).send('Access Denied');
     }
-
     try {
         const verified = jwt.verify(token, jwtSecret);
         console.log('Token verified:', verified); // Debug log
@@ -49,16 +47,13 @@ const verifyToken = (req, res, next) => {
 
 app.post('/api/user/create', async (req, res) => {
     const { username, email, password } = req.body;
-    
     // Check if password is provided
     if (!password) {
         return res.status(400).send({ error: "Password is required" });
     }
-
     // Hash the password
     const genSalt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, genSalt);
-    
     // Create a new user with the hashed password
     const newUser = new User({
         username,
