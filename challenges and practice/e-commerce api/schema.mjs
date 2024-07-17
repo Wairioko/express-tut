@@ -18,7 +18,8 @@ const UserSchema = mongoose.Schema(
         },
 
         isAdmin:{
-            Boolean: false
+            type: Boolean,
+            default: false
         }
 
 
@@ -41,11 +42,13 @@ const ProductSchema = mongoose.Schema({
         type: String
     },
     stock:{
-        number: 0
+        type: Number,
+        default: 0
     },
     ratings: [], 
     rating: {
-        number: 0
+        type: Number,
+        default: 0
     }
 })
 
@@ -54,7 +57,9 @@ const OrderSchema = mongoose.Schema({
     products:[Product._id, quantity],
     totalPrice: 0,
     status:{enum:['pending', 'paid', 'shipped', 'delivered'], default:"pending"},
-    createdAt:{ default: Date.now().toString()}
+    createdAt:{ 
+        type: Date,
+        default: Date.now().toString()}
 })
 
 
