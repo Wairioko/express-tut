@@ -99,6 +99,53 @@ router.get('/api/product/delete/:name', async (req, res) => {
 })
 
 
+
+
+router.get('/api/products/search', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        // set number of items per page
+        const limit = parseInt(req.query.limit) || 10;
+        // num of elements to skip
+        const skip = (page - 1) * limit;
+
+        const products = await Product.find()
+        .skip(skip)
+        .limit(limit)
+        .exec()
+
+        const totalProducts = await Product.countDocuments()
+        const totalPages = Math.ceil(totalProducts/limit)
+
+        res.json( {
+            products, currenPage:page, totalPages, totalProducts
+        })
+
+    } catch (error) {
+
+        res.status(500).json({message: error.message});
+    }
+})
+
+
+router.post('/api/products/rating/:name', async (req, res) => {
+    const { name } = req.params;
+    const rate = req.body;
+    
+    try {
+        const findProduct = await Product.find(name);
+        if(!findProduct) return res.status(500).send("Product not found");
+        if(rate <= 0) res.status(500).send("Rating cannot be less than or equal to 0");
+        const product_ratings = findProduct.ratings[rate]
+        const sum = list.reduce((acc, current) => acc + current, 0);
+        const rate_product = sum / product_ratings.length; 
+        findProduct.rating = rate_product
+        res.status(200).send('product rated at', rate_product);
+    } catch (error) {
+        console.log("Could not rate product", error);
+    }
+})
+
 export default router;
 
 

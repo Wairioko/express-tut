@@ -1,7 +1,5 @@
 import mongoose from "mongoose";
 
-
-
 const UserSchema = mongoose.Schema(
     {
         username:{
@@ -45,6 +43,10 @@ const ProductSchema = mongoose.Schema({
     stock:{
         number: 0
     },
+    ratings: [], 
+    rating: {
+        number: 0
+    }
 })
 
 const OrderSchema = mongoose.Schema({
