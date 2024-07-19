@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const UserSchema = mongoose.Schema(
+const UserSchema = new mongoose.Schema(
     {
         username:{
             type: String,
@@ -27,7 +27,7 @@ const UserSchema = mongoose.Schema(
 )
 
 
-const ProductSchema = mongoose.Schema({
+const ProductSchema = new mongoose.Schema({
     name:{
         type: String,
         required: true,
@@ -52,9 +52,10 @@ const ProductSchema = mongoose.Schema({
     }
 })
 
-const OrderSchema = mongoose.Schema({
-    user: User,
-    products:[Product._id, quantity],
+const OrderSchema = new mongoose.Schema({
+    user: UserSchema,
+    quantity:{type: Number, default:1},
+    products:[ProductSchema._id],
     totalPrice: 0,
     status:{enum:['pending', 'paid', 'shipped', 'delivered'], default:"pending"},
     createdAt:{ 
