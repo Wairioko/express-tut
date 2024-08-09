@@ -44,6 +44,7 @@ mongoose.connect('mongodb://localhost:27017/express-tut')
     .then(() => console.log('Connected to DB'))
     .catch(error => console.log(error));
 
+
 // Define port
 const port = process.env.PORT || 3050;
 
